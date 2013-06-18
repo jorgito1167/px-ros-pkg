@@ -8,6 +8,8 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/px4flow_node</url>
+  <depend package="roscpp"/>
+  <depend package="rosbag"/>
   <depend package="image_transport"/>
   <depend package="px_comm"/>
   <depend package="bfl"/>

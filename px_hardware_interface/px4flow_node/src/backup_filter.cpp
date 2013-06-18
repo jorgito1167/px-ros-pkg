@@ -1,9 +1,8 @@
 #include <px4flow_node/filter.h>
 
-using namespace std;
 using namespace MatrixWrapper;
-using namespace ros;
 using namespace BFL;
+using namespace std;
 
 
 
@@ -24,17 +23,6 @@ namespace estimation
     A(2,1) = 0.0;
     A(2,2) = 1.0;
 
-    Matrix B(2,2);
-    B(1,1) = 0.0;
-    B(1,2) = 0.0;
-    B(2,1) = 0.0;
-    B(2,2) = 0.0;
-
-    vector<Matrix> AB(2);
-
-    AB[0] = A;
-    AB[1] = B;
-
     ColumnVector sysNoise_Mu(2);
     sysNoise_Mu(1) = 0.0;
     sysNoise_Mu(2) = 0.0;
@@ -48,16 +36,16 @@ namespace estimation
 
     Gaussian system_Uncertainty(sysNoise_Mu, sysNoise_Cov);
 
-    LinearAnalyticConditionalGaussian sys_pdf_(AB, system_Uncertainty);
-    LinearAnalyticSystemModelGaussianUncertainty sys_model_(&sys_pdf);
+    sys_pdf_ = new LinearAnalyticConditionalGaussian(A, system_Uncertainty);
+    sys_model_ = new LinearAnalyticSystemModelGaussianUncertainty(sys_pdf_);
 
     //create MEASUREMENT MODEL
 
     Matrix H(2,2);
-    B(1,1) = 1.0;
-    B(1,2) = 0.0;
-    B(2,1) = 0.0;
-    B(2,2) = 1.0;
+    H(1,1) = 1.0;
+    H(1,2) = 0.0;
+    H(2,1) = 0.0;
+    H(2,2) = 1.0;
 
 
     ColumnVector measNoise_Mu(2);
@@ -73,8 +61,8 @@ namespace estimation
 
     Gaussian measurement_Uncertainty(measNoise_Mu, measNoise_Cov);
 
-    LinearAnalyticConditionalGaussian belt_meas_pdf_(H, measurement_Uncertainty);
-    LinearAnalyticSystemModelGaussianUncertainty belt_meas_model_(&meas_pdf);
+    belt_meas_pdf_ = new LinearAnalyticConditionalGaussian(H, measurement_Uncertainty);
+    belt_meas_model = new LinearAnalyticSystemModelGaussianUncertainty(&meas_pdf);
 
     };
 
@@ -88,11 +76,11 @@ namespace estimation
       delete sys_model_;
   };
 
-  void BeltEstimation::initialize(const ColumnVector& prior, const Time& time)
+  void BeltEstimation::initialize(const ColumnVector& prior, const ros::Time& time)
     {
       ColumnVector prior_Mu(2);
-      prior_Mu(1) = 0.0; 
-      prior_Mu(2) = 0.0;
+      prior_Mu(1) = prior(1); 
+      prior_Mu(2) = prior(2);
 
       SymmetricMatrix prior_Cov(2);
       prior_Cov(1,1) = 0.0;
@@ -105,8 +93,7 @@ namespace estimation
 
       // remember prior
       addMeasurement(prior,time)
-      filter_estimate_old_vec_ = prior_Mu;
-      filter_estimate_old_ = prior;
+      filter_estimate_old_vec_ = prior;
       filter_time_old_     = time;
 
       // filter initialized
@@ -120,7 +107,7 @@ namespace estimation
     estimate = filter_estimate_old_vec_;
   };
 
-  bool BeltEstimation::update(bool belt_active, const Time&  filter_time)
+  bool BeltEstimation::update(const ros::Time&  filter_time)
     {
       // only update filter when it is initialized
       if (!filter_initialized_){
@@ -146,11 +133,6 @@ namespace estimation
       // process belt measurement
       // ------------------------
       ROS_DEBUG("Process belt meas");
-      if (belt_active){
-      // remember last estimate
-      filter_estimate_old_vec_ = filter_->PostGet()->ExpectedValueGet();
-        }
-      }
 
       return true;
   };

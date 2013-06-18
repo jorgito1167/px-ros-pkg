@@ -26,7 +26,7 @@ set(PX4FLOW_NODE_SRCS
 )
 set(FILTER_NODE_SRCS
   src/filter_node.cc
-  src/filter.cc)
+  src/filter.cpp)
 rosbuild_add_boost_directories()
 
 rosbuild_add_executable(px4flow_node ${PX4FLOW_NODE_SRCS})
