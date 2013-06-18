@@ -1,11 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include <px_comm/OpticalFlow.h>
-#include <bfl/filter/extendendkalmanfilter.h>
-#include <bfl/model/linearanalyticsystemmodel_gaussianuncertainty.h>
-#include <bfl/model/linearanalyticmeasurementmodel_gaussianuncertainty.h>
-#include <bfl/pdf/linearanalyticsystemmodel_gaussianuncertainty.h>
-#include <bfl/pdf/linearanalyticmeasurementmodel_gaussianuncertainty.h>
 
 void kalmanFilter(px_comm::OpticalFlow msg)
 {
