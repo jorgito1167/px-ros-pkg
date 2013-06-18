@@ -2,4 +2,5 @@
     <node name="px4flow" pkg="px4flow_node" type="px4flow_node" output="screen" respawn="true" clear_params="true">
         <rosparam file="$(find px4flow_node)/launch/px4flow_parameters.yaml"/>
     </node>
+    <node name="filter_node" pkg="px4flow_node" type="filter_node" output="screen"/>
 </launch>

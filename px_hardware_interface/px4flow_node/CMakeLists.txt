@@ -24,9 +24,13 @@ set(PX4FLOW_NODE_SRCS
   src/SerialComm.cc
   src/px4flow_node.cc
 )
-
+set(FILTER_NODE_SRCS
+  src/filter_node.cc
+)
 rosbuild_add_boost_directories()
 
 rosbuild_add_executable(px4flow_node ${PX4FLOW_NODE_SRCS})
+rosbuild_add_executable(filter_node ${FILTER_NODE_SRCS})
+
 rosbuild_link_boost(px4flow_node thread system signals)
 
