@@ -10,6 +10,7 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #set(ROS_BUILD_TYPE RelWithDebInfo)
 
 rosbuild_init()
+rosbuild_gensrv()
 
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
@@ -25,12 +26,11 @@ set(PX4FLOW_NODE_SRCS
   src/px4flow_node.cc
 )
 set(FILTER_NODE_SRCS
-  src/filter_node.cc
+  src/filter_node.cpp
   src/filter.cpp)
 rosbuild_add_boost_directories()
 
 rosbuild_add_executable(px4flow_node ${PX4FLOW_NODE_SRCS})
 rosbuild_add_executable(filter_node ${FILTER_NODE_SRCS})
-
 rosbuild_link_boost(px4flow_node thread system signals)
 
