@@ -11,9 +11,7 @@ namespace estimation
   //constructor
   BeltEstimation::BeltEstimation():
     prior_(NULL),
-    filter_(NULL),
-    filter_initialized_(false),
-    belt_initialized_(false)
+    filter_(NULL)
   {
     //create the SYSTEM MODEL
 
@@ -64,8 +62,32 @@ namespace estimation
     belt_meas_pdf_ = new LinearAnalyticConditionalGaussian(H, measurement_Uncertainty);
     belt_meas_model_ = new LinearAnalyticMeasurementModelGaussianUncertainty(belt_meas_pdf_);
 
+
+    ColumnVector prior_Mu(2);
+    prior_Mu(1) = 0.0; 
+    prior_Mu(2) = 0.0;
+
+    SymmetricMatrix prior_Cov(2);
+    prior_Cov(1,1) = 0.0;
+    prior_Cov(1,2) = 0.0;
+    prior_Cov(2,1) = 0.0;
+    prior_Cov(2,2) = 0.0;
+
+    prior_  = new Gaussian(prior_Mu,prior_Cov);
+    filter_ = new ExtendedKalmanFilter(prior_);
+
+
     };
 
-  
+  // update filter
+  ColumnVector BeltEstimation::update(const ColumnVector meas)
+  {
+    filter_ ->Update(sys_model_,belt_meas_model_,meas);
+    posterior = filter_ -> PostGet();
+    return posterior -> ExpectedValueGet();
+
+};
+
+
 };
 

@@ -21,6 +21,9 @@ class BeltEstimation
 public:
   /// constructor
   BeltEstimation();
+
+  MatrixWrapper::ColumnVector update(const MatrixWrapper::ColumnVector meas);
+
 private:
   // pdf / model / filter
   BFL::LinearAnalyticSystemModelGaussianUncertainty*       sys_model_;
@@ -33,10 +36,9 @@ private:
   MatrixWrapper::SymmetricMatrix                          odom_covariance_, imu_covariance_, vo_covariance_;
 
   // vars
-  MatrixWrapper::ColumnVector filter_estimate_old_vec_;
+  BFL::Pdf<MatrixWrapper::ColumnVector> * posterior;
   
-  MatrixWrapper::ColumnVector belt_meas_, belt_meas_old_;
-  bool filter_initialized_, belt_initialized_;
+  ros::Time filter_time_old_;
 
 
 }; // class
