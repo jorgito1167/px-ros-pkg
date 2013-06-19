@@ -15,13 +15,15 @@ class NodeClass
       ros::Subscriber filter_sub;
       std_msgs::Float32 newMsg;
       BeltEstimation beltEstimator;
-      
+      ColumnVector currentEstimate;
+      ColumnVector meas;
   //Constructor
   NodeClass()
   {
       filter_pub = n.advertise<std_msgs::Float32>("ok",5);
       filter_sub = n.subscribe("/px4flow/opt_flow",5, &NodeClass::kalmanFilter,this);
-
+      currentEstimate = ColumnVector(2);
+      meas = ColumnVector(2);
   }
   //Destructor
   ~NodeClass()
@@ -29,10 +31,11 @@ class NodeClass
   }
     void kalmanFilter(px_comm::OpticalFlow msg)
     {
-        ColumnVector meas(2);
-        meas(0) = msg.velocity_y;
-        meas(1) = msg.velocity_x;
-        newMsg.data= msg.velocity_y;
+        
+        meas(1) =  msg.velocity_y;
+        meas(2) =  msg.velocity_x; 
+        currentEstimate = beltEstimator.update(meas);
+        newMsg.data= currentEstimate(1);
         filter_pub.publish(newMsg);
     }
 };
