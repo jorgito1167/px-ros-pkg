@@ -3,4 +3,8 @@
         <rosparam file="$(find px4flow_node)/launch/px4flow_parameters.yaml"/>
     </node>
     <node name="filter_node" pkg="px4flow_node" type="filter_node" output="screen"/>
+
+    <node name="true_velocity" pkg="px4flow_node" type="true_velocity_node.py" output="screen" respawn="true" clear_params="true">
+        <rosparam file="$(find px4flow_node)/launch/px4flow_parameters.yaml"/>
+    </node>
 </launch>

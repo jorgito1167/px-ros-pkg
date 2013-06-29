@@ -1,7 +1,6 @@
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
 #include <px_comm/OpticalFlow.h>
-#include <px4flow_node/filter.h>
 
 using namespace MatrixWrapper;
 using namespace estimation;
@@ -15,15 +14,11 @@ class NodeClass
       ros::Subscriber filter_sub;
       std_msgs::Float32 newMsg;
       BeltEstimation beltEstimator;
-      ColumnVector currentEstimate;
-      ColumnVector meas;
   //Constructor
   NodeClass()
   {
       filter_pub = n.advertise<std_msgs::Float32>("ok",5);
       filter_sub = n.subscribe("/px4flow/opt_flow",5, &NodeClass::kalmanFilter,this);
-      currentEstimate = ColumnVector(2);
-      meas = ColumnVector(2);
   }
   //Destructor
   ~NodeClass()
@@ -32,10 +27,7 @@ class NodeClass
     void kalmanFilter(px_comm::OpticalFlow msg)
     {
         
-        meas(1) =  msg.velocity_y;
-        meas(2) =  msg.velocity_x; 
-        currentEstimate = beltEstimator.update(meas);
-        newMsg.data= currentEstimate(1);
+        newMsg.data= currentEstimate(2);
         filter_pub.publish(newMsg);
     }
 };

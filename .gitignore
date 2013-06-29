@@ -10,3 +10,18 @@
 *.lai
 *.la
 *.a
+
+#swap files
+*.swp
+
+#build folder
+build/
+
+#bin folder
+bin/
+
+#msg generation
+msg_gen/
+
+#built message files
+px_hardware_interface/px4flow_node/src/px4flow_node/

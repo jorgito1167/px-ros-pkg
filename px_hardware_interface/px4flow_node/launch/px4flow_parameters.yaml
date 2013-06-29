@@ -1,2 +1,4 @@
 serial_port: /dev/ttyACM0
 baudrate:    921600
+focal_length: 0.022
+ground_distance: 0.1841
