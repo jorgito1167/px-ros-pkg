@@ -25,7 +25,9 @@ private:
     void readStart(uint32_t timeout_ms);
     void syncCallback(const ros::TimerEvent& timerEvent);
     void timeoutCallback(const boost::system::error_code& error);
-
+    
+    void convert(double current[]);
+    void filter(double current[] , double previous[]); 
     boost::asio::io_service m_uartService;
     boost::asio::serial_port m_port;
     boost::asio::deadline_timer m_timer;
@@ -51,6 +53,14 @@ private:
     int m_errorCount;
 
     bool m_connected;
+
+    double previous[2];
+    double current[2];
+
+    double ground_conversion;
+    double focal_length;
+
+    ros::NodeHandle paramHandle;
 };
 
 }

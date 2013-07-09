@@ -25,6 +25,7 @@ SerialComm::SerialComm(const std::string& frameId)
  , m_errorCount(0)
  , m_connected(false)
 {
+    paramHandle = ros::NodeHandle("~");
 
 }
 
@@ -172,6 +173,18 @@ SerialComm::readCallback(const boost::system::error_code& error, size_t bytesTra
                 optFlowMsg.velocity_x = flow.flow_comp_m_x;
                 optFlowMsg.velocity_y = flow.flow_comp_m_y;
                 optFlowMsg.quality = flow.quality;
+                
+                current = {double(optFlowMsg.velocity_x) ,double(optFlowMsg.velocity_y)};
+                convert(current);
+                if (previous == NULL){
+                  previous = {0,0};
+                  previous = current[0];
+                  previous = current[1];
+                }
+                filter(current,previous);
+
+                optFlowMsg.velocity_x = previous[0];
+                optFlowMsg.velocity_y = previous[1];
 
                 m_optFlowPub.publish(optFlowMsg);
 
@@ -290,6 +303,17 @@ SerialComm::timeoutCallback(const boost::system::error_code& error)
         m_timeout = true;
         ROS_WARN("Serial connection timed out.");
     }
+}
+void 
+SerialComm::convert(double current[]){
+  
+}
+
+void
+SerialComm::filter(double current[], double previous[])
+{
+
+
 }
 
 }

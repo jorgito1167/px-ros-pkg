@@ -32,7 +32,7 @@ class NodeClass():
                 self.out[j] = self.prev[j] + alpha*(current[j] - self.prev[j])
             self.prev = self.out
             self.pub1.publish(self.out[0], self.out[1])
-            self.pub3.publish(math.atan(self.out[0]/self.out[1]))
+            self.pub3.publish(math.degrees(math.atan(-self.out[1]/self.out[0])))
 
   def __init__(self):
       self.prev = None
