@@ -8,34 +8,39 @@ import rospy
 import serial
 from std_msgs.msg import Float64
 from std_msgs.msg import String
-
+from px4flow_node.msg import velocity
 class Arduino():
     
     def __init__(self):
         self.portOpened = False
-        self.previousInput = 0.0
+        self.inp = 0.0
         self.pub = rospy.Publisher('wheel_velocity', Float64)
+        self.pub2 = rospy.Publisher('ratio', Float64)
         rospy.init_node('arduino_node')
+        self.sub = rospy.Subscriber("true_velocity",velocity , self.ratio)
         
+    def ratio(self, msg):
+        rospy.loginfo('ok')
+        if self.inp!=0:
+            self.pub2.publish(msg.velocity_x/self.inp)
+        else:
+            self.pub2.publish(0.0)
     def run(self):
         self.portOpened = self.connect()
         time.sleep(4)
         if (self.portOpened):
             while not rospy.is_shutdown():
-                inp = self.readData()
-                self.publish(inp)
+                self.readData()
+                self.publish(self.inp)
                 time.sleep(0.01)
 
     def readData(self):
         inp = self.port.readline().rstrip('\n')
-        rospy.loginfo(str(inp))
         try:
-          inp = float(inp)
-          self.previousInput= inp
+          self.inp = float(inp)
         except:
           rospy.loginfo("not a valid float")
-          return self.previousInput
-        return inp
+          
     def publish(self,msg):
             self.pub.publish(msg) 
 
