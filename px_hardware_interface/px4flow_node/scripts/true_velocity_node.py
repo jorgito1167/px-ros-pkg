@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import roslib; roslib.load_manifest('px4flow_node')
 import rospy
+import Math
 import time
 from std_msgs.msg import Float64
 from px_comm.msg import OpticalFlow
@@ -31,12 +32,14 @@ class NodeClass():
                 self.out[j] = self.prev[j] + alpha*(current[j] - self.prev[j])
             self.prev = self.out
             self.pub1.publish(self.out[0], self.out[1])
+            self.pub3.publish(math.atan(self.out[0]/self.out[1]))
 
   def __init__(self):
       self.prev = None
       self.out = [0,0]
       self.pub = rospy.Publisher('true_velocity', velocity)
       self.pub1 = rospy.Publisher('filter_velocity', velocity)
+      self.pub3 = rospy.Publisher('belt_angle', Float64)
       rospy.init_node('true_velocity_node')
       rospy.Subscriber('/px4flow/opt_flow',OpticalFlow, self.filterVel)
   
